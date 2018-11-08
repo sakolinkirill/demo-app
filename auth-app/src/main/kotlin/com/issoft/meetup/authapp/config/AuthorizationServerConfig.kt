@@ -1,9 +1,11 @@
 package com.issoft.meetup.authapp.config
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.core.io.Resource
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
@@ -16,10 +18,24 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory
 
 @Configuration
+@ConfigurationProperties(prefix = "application.oauth")
 class AuthorizationServerConfig @Autowired constructor(
-        private val oAuthProperties: OAuthProperties,
         private val authenticationManager: AuthenticationManager
 ) : AuthorizationServerConfigurerAdapter() {
+
+    var browserCredentials: ClientCredentials? = null
+    var jwtPrivateKey: JwtPrivateKey? = null
+
+    class JwtPrivateKey {
+        var keystoreResource: Resource? = null
+        var keystorePassword: String? = null
+        var keyAlias: String? = null
+    }
+
+    class ClientCredentials {
+        var client: String? = null
+        var secret: String? = null
+    }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {
         endpoints!!
@@ -35,8 +51,8 @@ class AuthorizationServerConfig @Autowired constructor(
 
     override fun configure(clients: ClientDetailsServiceConfigurer?) {
         clients!!.inMemory()
-                .withClient(oAuthProperties.browserCredentials!!.client)
-                .secret(oAuthProperties.browserCredentials!!.secret)
+                .withClient(browserCredentials!!.client)
+                .secret(browserCredentials!!.secret)
                 .scopes("api")
                 .authorizedGrantTypes("refresh_token", "password")
     }
@@ -48,7 +64,7 @@ class AuthorizationServerConfig @Autowired constructor(
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
-        val jwtPrivateKey = oAuthProperties.jwtPrivateKey!!
+        val jwtPrivateKey = jwtPrivateKey!!
 
         val keyStoreKeyFactory = KeyStoreKeyFactory(
                 jwtPrivateKey.keystoreResource,
