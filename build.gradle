@@ -17,13 +17,10 @@ buildscript {
 subprojects {
 	apply plugin: 'kotlin'
 	apply plugin: 'kotlin-spring'
-	apply plugin: 'eclipse'
-	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 
-	group = 'com.issoft.meetup'
-	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
 	compileKotlin {
 		kotlinOptions {
 			freeCompilerArgs = ["-Xjsr305=strict"]
@@ -37,10 +34,6 @@ subprojects {
 		}
 	}
 
-	repositories {
-		mavenCentral()
-	}
-
 	dependencyManagement {
 		imports {
 			mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
@@ -48,13 +41,15 @@ subprojects {
 		}
 	}
 
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+
 	dependencies {
-		implementation('org.springframework.boot:spring-boot-starter-data-redis-reactive')
-		implementation('org.springframework.boot:spring-boot-starter-webflux')
-		implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-		implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-		implementation("org.jetbrains.kotlin:kotlin-reflect")
-		testImplementation('org.springframework.boot:spring-boot-starter-test')
-		testImplementation('io.projectreactor:reactor-test')
+		compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8'
+		compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect'
+		testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+		testCompile group: 'io.projectreactor', name: 'reactor-test'
 	}
 }

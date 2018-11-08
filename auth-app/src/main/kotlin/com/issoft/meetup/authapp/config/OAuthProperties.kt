@@ -5,19 +5,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
 
 @Configuration
-@ConfigurationProperties(prefix = "application")
-class ApplicationProperties {
-
-    var name: String? = null
+@ConfigurationProperties(prefix = "application.oauth")
+class OAuthProperties {
 
     var browserCredentials: ClientCredentials? = null
-
     var jwtPrivateKey: JwtPrivateKey? = null
-
-    class ClientCredentials {
-        var client: String? = null
-        var secret: String? = null
-    }
 
     class JwtPrivateKey {
         var keystoreResource: Resource? = null
@@ -25,4 +17,8 @@ class ApplicationProperties {
         var keyAlias: String? = null
     }
 
+    class ClientCredentials {
+        var client: String? = null
+        var secret: String? = null
+    }
 }

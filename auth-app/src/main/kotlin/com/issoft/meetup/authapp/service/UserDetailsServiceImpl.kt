@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UserDetailsServiceImpl @Autowired constructor(private val passwordEncoder: PasswordEncoder) : UserDetailsService {
+class UserDetailsServiceImpl @Autowired constructor(
+        private val passwordEncoder: PasswordEncoder
+) : UserDetailsService {
 
     override fun loadUserByUsername(login: String): UserDetails {
         if ("login" != login) {

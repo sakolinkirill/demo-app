@@ -17,7 +17,7 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 
 @Configuration
 class AuthorizationServerConfig @Autowired constructor(
-        private val oAuthProperties: ApplicationProperties,
+        private val oAuthProperties: OAuthProperties,
         private val authenticationManager: AuthenticationManager
 ) : AuthorizationServerConfigurerAdapter() {
 
