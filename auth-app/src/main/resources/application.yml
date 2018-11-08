@@ -6,14 +6,9 @@ server:
   port: 9901
 
 application:
-  remoteServices:
-    authapp:
-      url: http://${HOST_AUTHAPP}
   oauth:
-    jwt-private-key:
-      keystore-resource: classpath:jwt.jks
-      keystore-password: 123456
-      key-alias: jwt
-    browser-credentials:
-      client: browser
-      secret: $2a$04$ip9jW1YzlabyKxZ3y2vUkO5xxrfh5pscEvIcALF746IzVj/IBWFpy
+    keystore-resource: classpath:jwt.jks
+    keystore-password: 123456
+    key-alias: jwt
+    client-id: browser
+    client-secret: $2a$04$ip9jW1YzlabyKxZ3y2vUkO5xxrfh5pscEvIcALF746IzVj/IBWFpy

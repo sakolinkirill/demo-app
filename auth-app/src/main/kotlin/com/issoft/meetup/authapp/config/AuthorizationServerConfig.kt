@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.core.io.Resource
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore
@@ -23,23 +23,20 @@ class AuthorizationServerConfig @Autowired constructor(
         private val authenticationManager: AuthenticationManager
 ) : AuthorizationServerConfigurerAdapter() {
 
-    var browserCredentials: ClientCredentials? = null
-    var jwtPrivateKey: JwtPrivateKey? = null
+    var clientId: String? = null
+    var clientSecret: String? = null
+    var keystoreResource: Resource? = null
+    var keystorePassword: String? = null
+    var keyAlias: String? = null
 
-    class JwtPrivateKey {
-        var keystoreResource: Resource? = null
-        var keystorePassword: String? = null
-        var keyAlias: String? = null
-    }
-
-    class ClientCredentials {
-        var client: String? = null
-        var secret: String? = null
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
     }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {
         endpoints!!
-                .tokenServices(tokenServices())
+                //.tokenServices(tokenServices())
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter())
                 .authenticationManager(authenticationManager)
@@ -51,8 +48,8 @@ class AuthorizationServerConfig @Autowired constructor(
 
     override fun configure(clients: ClientDetailsServiceConfigurer?) {
         clients!!.inMemory()
-                .withClient(browserCredentials!!.client)
-                .secret(browserCredentials!!.secret)
+                .withClient(clientId)
+                .secret(clientSecret)
                 .scopes("api")
                 .authorizedGrantTypes("refresh_token", "password")
     }
@@ -64,19 +61,13 @@ class AuthorizationServerConfig @Autowired constructor(
 
     @Bean
     fun accessTokenConverter(): JwtAccessTokenConverter {
-        val jwtPrivateKey = jwtPrivateKey!!
-
-        val keyStoreKeyFactory = KeyStoreKeyFactory(
-                jwtPrivateKey.keystoreResource,
-                jwtPrivateKey.keystorePassword!!.toCharArray())
-
+        val keyStoreKeyFactory = KeyStoreKeyFactory(keystoreResource, keystorePassword!!.toCharArray())
         val jwtAccessTokenConverter = JwtAccessTokenConverter()
-        jwtAccessTokenConverter.setKeyPair(keyStoreKeyFactory.getKeyPair(jwtPrivateKey.keyAlias))
-
+        jwtAccessTokenConverter.setKeyPair(keyStoreKeyFactory.getKeyPair(keyAlias))
         return jwtAccessTokenConverter
     }
 
-    @Bean
+    /*@Bean
     @Primary
     fun tokenServices(): DefaultTokenServices {
         val defaultTokenServices = DefaultTokenServices()
@@ -84,6 +75,6 @@ class AuthorizationServerConfig @Autowired constructor(
         defaultTokenServices.setSupportRefreshToken(true)
         defaultTokenServices.setTokenEnhancer(accessTokenConverter())
         return defaultTokenServices
-    }
+    }*/
 
 }
