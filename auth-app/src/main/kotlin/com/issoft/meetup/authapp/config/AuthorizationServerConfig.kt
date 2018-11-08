@@ -28,6 +28,7 @@ class AuthorizationServerConfig @Autowired constructor(
     var keystoreResource: Resource? = null
     var keystorePassword: String? = null
     var keyAlias: String? = null
+    var test: String? = null
 
     @Bean
     fun passwordEncoder(): PasswordEncoder {
