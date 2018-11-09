@@ -1,0 +1,15 @@
+subdomain-env: SUBDOMAIN_APP2
+static-root: /static/app2
+
+api:
+  - context-path: /api
+    upstream-env: HOST_APP2
+    locations:
+      - url: /test1/{id}
+        roles: ['TEST_ROLE']
+
+  - context-path: /api/auth
+    upstream-env: HOST_AUTHAPP
+    locations:
+      - url: /oauth/token
+        security: none
