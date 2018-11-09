@@ -8,7 +8,7 @@ NONE = 'none'
 URL_PLACEHOLDER_REGEX = re.compile(r"\{.+?\}", re.IGNORECASE)
 NGINX_CONFIG_TEMPLATE = 'nginx.conf.template'
 NGINX_CONFIG = 'nginx.conf'
-YML_SUBDOMAINS_CONFIGS_DIR = 'subdomains'
+YML_SUBDOMAINS_CONFIGS_DIR = 'applications'
 
 def api_location_regex(context_path, location, filename):
     url = location.get('url')
@@ -27,13 +27,9 @@ def parse_subdomains_config():
         with open(os.path.join(YML_SUBDOMAINS_CONFIGS_DIR, filename), 'r') as stream:
             subdomain_config = yaml.load(stream)
 
-        # subdomain url
-        subdomain_env = subdomain_config.get('subdomain-env')
-        if not subdomain_env:
-            raise Exception('{}: Subdomain env should be specified'.format(filename))
-        subdomain_url = os.getenv(subdomain_env)
+        subdomain_url = subdomain_config.get('subdomain-env')
         if not subdomain_url:
-            raise Exception('{}: {} should be specified in container'.format(filename, subdomain_env))
+            raise Exception('{} should be specified in container'.format(filename))
 
         # subdomain static resources
         static_root = subdomain_config.get('static-root')
@@ -47,14 +43,11 @@ def parse_subdomains_config():
             context_path = api.get('context-path', '/')
 
             # api upstream
-            upstream_env = api.get('upstream-env')
-            if not upstream_env:
-                raise Exception('{}: Upstream env should be specified in api section'.format(filename))
-            upstream_url = os.getenv(upstream_env)
+            upstream_url = api.get('upstream-url')
+            upstream_name = api.get('upstream-name')
             if not upstream_url:
-                raise Exception('{}: {} should be specified in container'.format(filename, upstream_env))
+                raise Exception('{} should be specified in container'.format(filename))
 
-            upstream_name = upstream_env[5:].lower()
             upstream = {'name': upstream_name, 'url': upstream_url}
 
             if not any(upstream['name'] == upstream_name for upstream in all_upstreams):
@@ -63,7 +56,7 @@ def parse_subdomains_config():
             # api locations
             locations = api.get('locations')
             if not locations:
-                raise Exception('{}: Locations should be specified in api section'.format(filename, upstream_env))
+                raise Exception('{}: Locations should be specified in api section'.format(filename))
 
             for location in locations:
                 location['regex'] = api_location_regex(context_path, location, filename)
