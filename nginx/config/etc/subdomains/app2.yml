@@ -13,3 +13,6 @@ api:
     locations:
       - url: /oauth/token
         security: none
+
+      - url: /actuator
+        security: none

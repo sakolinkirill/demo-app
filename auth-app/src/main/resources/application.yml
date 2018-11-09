@@ -3,7 +3,7 @@ spring:
     name: authapp
 
 server:
-  port: 8081
+  port: 8090
 
 application:
   oauth:
