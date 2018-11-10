@@ -1,6 +1,6 @@
 package com.issoft.meetup.app1.filter
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import com.issoft.meetup.app1.helper.AuthenticationHelper
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
@@ -8,14 +8,12 @@ import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 
-//@Component
+@Component
 class AuthFilter: WebFilter {
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
-        val token = exchange.request.headers.get("Authorization")
-        //println(token)
-        val context = SecurityContextHolder.getContext()
-        context.authentication  = UsernamePasswordAuthenticationToken("qqq", "www")
+        val tokenHeader = exchange.request.headers.getFirst("Authorization")
+        SecurityContextHolder.getContext().authentication  = AuthenticationHelper.authentication(tokenHeader)
         return chain.filter(exchange)
     }
 }

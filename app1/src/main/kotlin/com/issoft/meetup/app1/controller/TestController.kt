@@ -16,8 +16,8 @@ class TestController @Autowired constructor() {
         return Mono.just("app1 " + id + " "+ System.currentTimeMillis())
     }
 
-    @RequestMapping("/test")
-    fun test(principal: Mono<Principal>): Mono<String> {
+    @RequestMapping("/test2")
+    fun test2(principal: Mono<Principal>): Mono<String> {
         return principal.map { t -> String.format("Hello %s", t.name) }
     }
 
@@ -25,4 +25,5 @@ class TestController @Autowired constructor() {
     fun test3(): Mono<String> {
         return Mono.just(SecurityContextHolder.getContext().authentication.name)
     }
+
 }

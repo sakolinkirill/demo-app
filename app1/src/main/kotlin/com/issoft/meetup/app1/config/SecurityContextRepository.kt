@@ -1,13 +1,12 @@
 package com.issoft.meetup.app1.config
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import com.issoft.meetup.app1.helper.AuthenticationHelper
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextImpl
 import org.springframework.security.web.server.context.ServerSecurityContextRepository
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
-
 
 @Component
 class SecurityContextRepository : ServerSecurityContextRepository {
@@ -17,11 +16,8 @@ class SecurityContextRepository : ServerSecurityContextRepository {
     }
 
     override fun load(exchange: ServerWebExchange): Mono<SecurityContext> {
-        val token = exchange.request.headers.get("Authorization")
-        println(token)
-        //AnonymousAuthenticationToken
-        val authentication = UsernamePasswordAuthenticationToken("qqq", "www", emptyList())
-        return Mono.just(SecurityContextImpl(authentication))
+        val tokenHeader = exchange.request.headers.getFirst("Authorization")
+        return Mono.just(SecurityContextImpl(AuthenticationHelper.authentication(tokenHeader)))
     }
 
 }
