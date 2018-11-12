@@ -1,6 +1,9 @@
 spring:
   application:
     name: app1
+  data:
+    mongodb:
+      uri: mongodb://localhost/test
 
 server:
   port: 8092
