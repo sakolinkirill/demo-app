@@ -2,6 +2,7 @@ apply plugin: 'org.springframework.boot'
 
 description = 'app2'
 dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis-reactive'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'
 }
