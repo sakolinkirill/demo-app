@@ -1,7 +1,10 @@
 package com.issoft.meetup.app1.controller
 
+import com.issoft.meetup.app1.model.User
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -9,8 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.security.Principal
 import reactor.core.publisher.Flux
-
-
 
 @RestController
 class TestController @Autowired constructor(val webClientBuilder: WebClient.Builder) {
@@ -31,14 +32,12 @@ class TestController @Autowired constructor(val webClientBuilder: WebClient.Buil
     }
 
     @RequestMapping("/test4")
-    fun test4(): Mono<String> {
-        /*val accounts = webClientBuilder.build().get().uri("http://localhost:8092/read").retrieve().bodyToFlux(com.issoft.meetup.app2.User::class.java)
-        return accounts
-                .collectList()
-                .map({ a -> Customer(a) })
-                .mergeWith(repository.findById(id))
-                .collectList()
-                .map(Function { CustomerMapper.map() })*/
-        return Mono.just("qwe")
+    fun test4(): Flux<User> {
+        return webClientBuilder.build().get().uri("http://localhost:8092/read").retrieve().bodyToFlux(User::class.java)
+    }
+
+    @GetMapping("/test5", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun test5(): Flux<Int> {
+        return webClientBuilder.build().get().uri("http://localhost:8092/test").retrieve().bodyToFlux(Int::class.java)
     }
 }
