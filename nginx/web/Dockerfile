@@ -1,11 +1,11 @@
 FROM openresty/openresty:alpine-fat
 
-WORKDIR /mcdms/etc/
+WORKDIR /demo
 
 RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-jwt
 
 EXPOSE 8080
 
-COPY . /mcdms/etc
+COPY . /demo
 
-ENTRYPOINT ["/mcdms/etc/docker-entrypoint.sh"]
+ENTRYPOINT ["/demo/docker-entrypoint.sh"]

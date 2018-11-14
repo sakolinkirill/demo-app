@@ -18,7 +18,7 @@ class TestController @Autowired constructor(val webClientBuilder: WebClient.Buil
 
     @RequestMapping("/test1/{id}")
     fun test1(@PathVariable id: String): Mono<String> {
-        return Mono.just("app1 " + id + " "+ System.currentTimeMillis())
+        return Mono.just("app1 " + id + " " + System.currentTimeMillis())
     }
 
     @RequestMapping("/test2")
@@ -33,11 +33,16 @@ class TestController @Autowired constructor(val webClientBuilder: WebClient.Buil
 
     @RequestMapping("/test4")
     fun test4(): Flux<User> {
-        return webClientBuilder.build().get().uri("http://localhost:8092/read").retrieve().bodyToFlux(User::class.java)
+        return webClientBuilder.build().get().uri("http://localhost:8092/user/get").retrieve().bodyToFlux(User::class.java)
     }
 
     @GetMapping("/test5", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun test5(): Flux<Int> {
-        return webClientBuilder.build().get().uri("http://localhost:8092/test").retrieve().bodyToFlux(Int::class.java)
+    fun test5(): Flux<User> {
+        return webClientBuilder.build().get().uri("http://localhost:8092/user/stream").retrieve().bodyToFlux(User::class.java)
+    }
+
+    @GetMapping("/test6")
+    fun test6(): Mono<String> {
+        return webClientBuilder.build().get().uri("https://www.tut.by/").retrieve().bodyToMono(String::class.java)
     }
 }

@@ -5,5 +5,20 @@ spring:
     mongodb:
       uri: mongodb://localhost/test
 
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: 'prometheus'
+
 server:
   port: 8092

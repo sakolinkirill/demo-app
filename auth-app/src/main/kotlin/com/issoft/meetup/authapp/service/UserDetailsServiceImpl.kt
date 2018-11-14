@@ -17,7 +17,7 @@ class UserDetailsServiceImpl @Autowired constructor(
 
     override fun loadUserByUsername(login: String): UserDetails {
         if ("login" != login) {
-            throw UsernameNotFoundException(login);
+            throw UsernameNotFoundException(login)
         }
 
         return User(login, passwordEncoder.encode("password"),
